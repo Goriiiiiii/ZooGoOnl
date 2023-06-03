@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,19 +18,20 @@ public class LoginLogout : MonoBehaviour
     public InputField AccountUserName;
     public InputField AccountPassword;
 
+
     public string baseUrl = "http://localhost:8080/ZooGo/";
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
     public void AccountRegister()
     {
@@ -47,6 +48,7 @@ public class LoginLogout : MonoBehaviour
 
     IEnumerator RegisterNewAccount(string uName, string pWord)
     {
+        pWord = HashPassword(pWord);
         WWWForm form = new WWWForm();
         form.AddField("newAccountUsername", uName);
         form.AddField("newAccountPassword", pWord);
@@ -63,13 +65,13 @@ public class LoginLogout : MonoBehaviour
             {
                 string responseText = www.downloadHandler.text;
                 Debug.Log("Response = " + responseText);
-              //  info.Text= "Response = " + responseText;
+                //  info.Text= "Response = " + responseText;
             }
         }
     }
     IEnumerator LoginAccount(string uName, string pWord)
     {
-        //pWord = HashPassword(pWord);
+        pWord = HashPassword(pWord);
         WWWForm form = new WWWForm();
         form.AddField("loginUsername", uName);
         form.AddField("loginPassword", pWord);
@@ -92,5 +94,21 @@ public class LoginLogout : MonoBehaviour
             }
         }
     }
+    static string HashPassword(string password)
+    {
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            // Chuyển đổi chuỗi thành mảng byte
+            byte[] bytes = Encoding.UTF8.GetBytes(password);
 
+            // Băm dữ liệu
+            byte[] hashBytes = sha256.ComputeHash(bytes);
+
+            // Chuyển đổi mảng byte thành chuỗi hexa
+            string hash = BitConverter.ToString(hashBytes).Replace("-", String.Empty);
+
+            return hash;
+        }
+
+    }
 }
